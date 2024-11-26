@@ -4,13 +4,19 @@ import Image from "next/image";
 
 export default function Home() {
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-       <div>Door Project</div>
-       <Bluetooth/>
+    <div className="flex flex-col items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
+      <main className="flex flex-col text-center gap-8 row-start-2 items-center ">
+        <div className="flex text-center align-items-center justify-center">
+          Door Project
+        </div>
+        <Bluetooth />
       </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <div><a href="https://github.com/xavieryn"> <Github/></a></div>
+      <footer className="pt-20 flex gap-6 flex-wrap items-center justify-center">
+        <div>
+          <a href="https://github.com/xavieryn">
+            <Github />
+          </a>
+        </div>
       </footer>
     </div>
   );
