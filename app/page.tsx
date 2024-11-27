@@ -1,6 +1,5 @@
 import Bluetooth from "@/components/Bluetooth";
 import { Github } from "lucide-react";
-import Image from "next/image";
 
 export default function Home() {
   return (
