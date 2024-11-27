@@ -96,9 +96,9 @@ function Bluetooth() {
           {/* <p>{characteristic?.uuid || "No Characteristic"}</p> */}
           <Button onClick={ChangeLightStatus}>
             {!lightTurnedOn ? (
-              <div> Turn on Light </div>
+              <div> Turn on Motor </div>
             ) : (
-              <div>Turn off Light</div>
+              <div>Turn off Motor</div>
             )}
           </Button>
           <Button onClick={disconnectDevice}>Disconnect</Button>
