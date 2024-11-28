@@ -10,6 +10,9 @@ int enB = 3;
 int in3 = 5;
 int in4 = 4;
 
+bool goingUp = false;
+
+
 BLEService MotorService("19B10000-E8F2-537E-4F6C-D104768A1214"); // Bluetooth® Low Energy Motor Service
 
 // Bluetooth® Low Energy LED Switch Characteristic - custom 128-bit UUID, read and writable by central
@@ -21,8 +24,8 @@ void setup() {
   while(!Serial);
 
   // Set up all the limit switches
-  limitSwitchHandle.setDebounceTime(50);
-  limitSwitchTop.setDebounceTime(50);
+  limitSwitchHandle.setDebounceTime(1);
+  limitSwitchTop.setDebounceTime(1);
 
 
 	// Set all the motor control pins to outputs
@@ -64,39 +67,41 @@ void loop() {
   limitSwitchHandle.loop();
   limitSwitchTop.loop();
 
-  // if (door limit switch != true) then go
-
-  if (!limitSwitchHandle.isPressed()){
-    // run motor
-  }
-  else{
-    // if it was the first time seeing it, run a timer, and reverse direction of motor
-       Serial.println("Limit Switch Handle is pressed");
-  }
-  if (!limitSwitchTop.isPressed()){
-    // run motor
-  }
-  else{
-    // if it was the first time seeing it, run a timer, and reverse direction of motor
-       Serial.println("Limit Switch Top is pressed");
-
-  }
-
-
   if(central){ 
     Serial.print("Connected to central ");
     Serial.println(central.address());
 
-    while(central.connected()){
+    if(central.connected()){
+        if (limitSwitchHandle.isPressed()){
+    // run motor
+           Serial.println("Limit Switch Handle is pressed");
+  } 
+  if (limitSwitchHandle.isReleased()){
+      Serial.println("Limit Switch Handle is released");
+  }
+  if (limitSwitchTop.isPressed()){
+    // run motor
+           Serial.println("Limit Switch Top is pressed");
+  }
         if (switchCharacteristic.value()){
-          // if (door limit switch != true) then go
-
-          // else if (door limit switch = true), then wait 5 seconds, and bring arm back up until it hits second limit switch
-          directionControl();
-        } else{
-          Serial.println(F("Motor off"));
-        }
-      
+          Serial.println(switchCharacteristic.value());
+          if (!goingUp && !limitSwitchHandle.isPressed()){
+            runMotor("down");
+            Serial.println("Going Down");
+          }  else if (limitSwitchHandle.isPressed()){
+            //delay(5000);
+            runMotor("up");
+            goingUp = true;
+            Serial.println("Going Up");
+          } else if (limitSwitchTop.isPressed()) {
+            goingUp == false;
+            turnOffMotor();
+            Serial.println("Reached the Top");
+          }
+        }   
+    }
+    else{
+      Serial.println("Disconnected");
     }
   }
 
@@ -114,22 +119,26 @@ void loop() {
 }
 
 // This function lets you control spinning direction of motors
-void directionControl() {
+void runMotor(String direction) {
 	// Set motors to maximum speed
 	// For PWM maximum possible values are 0 to 255
 	analogWrite(enB, 255);
 
-	// Turn on motor B
-	digitalWrite(in3, HIGH);
-	digitalWrite(in4, LOW);
-	delay(2000);
-	
-	// Now change motor directions
-	digitalWrite(in3, LOW);
-	digitalWrite(in4, HIGH);
-	delay(2000);
-	
-	// Turn off motors
+  if (direction == "up"){
+    // Turn on motor B
+    digitalWrite(in3, HIGH);
+    digitalWrite(in4, LOW);
+    delay(2000);
+  } else if (direction == "down") {	
+    // Now change motor directions
+    digitalWrite(in3, LOW);
+    digitalWrite(in4, HIGH);
+    delay(2000);
+  }
+}
+
+void turnOffMotor(){
+  	// Turn off motors
 	digitalWrite(in3, LOW);
 	digitalWrite(in4, LOW);
 }
