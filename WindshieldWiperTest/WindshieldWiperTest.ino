@@ -1,5 +1,9 @@
 #include <ArduinoBLE.h>
+#include <ezButton.h>
 
+// ezButton for limit switches
+ezButton limitSwitchHandle(8); // Door handle
+ezButton limitSwitchTop(9); // Top of range
 
  // Motor B connections (Connected to the L298N)
 int enB = 3;
@@ -15,6 +19,11 @@ void setup() {
   // Lets me see print to a console log
   Serial.begin(9600);
   while(!Serial);
+
+  // Set up all the limit switches
+  limitSwitchHandle.setDebounceTime(50);
+  limitSwitchTop.setDebounceTime(50);
+
 
 	// Set all the motor control pins to outputs
 	pinMode(enB, OUTPUT);
@@ -44,29 +53,60 @@ void setup() {
   BLE.advertise(); 
 
   Serial.println("BLE Motor Peripheral");
+
+  bool diconnectedNotif = false;
 }
 
 void loop() {
   BLEDevice central = BLE.central();
+
+  // Test for limit switch
+  limitSwitchHandle.loop();
+  limitSwitchTop.loop();
+
+  // if (door limit switch != true) then go
+
+  if (!limitSwitchHandle.isPressed()){
+    // run motor
+  }
+  else{
+    // if it was the first time seeing it, run a timer, and reverse direction of motor
+       Serial.println("Limit Switch Handle is pressed");
+  }
+  if (!limitSwitchTop.isPressed()){
+    // run motor
+  }
+  else{
+    // if it was the first time seeing it, run a timer, and reverse direction of motor
+       Serial.println("Limit Switch Top is pressed");
+
+  }
+
 
   if(central){ 
     Serial.print("Connected to central ");
     Serial.println(central.address());
 
     while(central.connected()){
-      if(switchCharacteristic.written()){
         if (switchCharacteristic.value()){
+          // if (door limit switch != true) then go
+
+          // else if (door limit switch = true), then wait 5 seconds, and bring arm back up until it hits second limit switch
           directionControl();
         } else{
           Serial.println(F("Motor off"));
         }
-      }
+      
     }
   }
 
    // when the central disconnects, print it out:
-    Serial.print(F("Disconnected from central: "));
-    Serial.println(central.address());
+  //  if (!disconnectedNotif){
+  //    Serial.print(F("Disconnected from central: "));
+  //     Serial.println(central.address());
+  //     disconnectedNotif = true;
+  //  }
+   
 	// directionControl();
 	// delay(1000);
 	// speedControl();
