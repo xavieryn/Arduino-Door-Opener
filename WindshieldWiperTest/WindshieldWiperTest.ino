@@ -24,8 +24,8 @@ void setup() {
   while(!Serial);
 
   // Set up all the limit switches
-  limitSwitchHandle.setDebounceTime(1);
-  limitSwitchTop.setDebounceTime(1);
+  limitSwitchHandle.setDebounceTime(20);
+  limitSwitchTop.setDebounceTime(20);
 
 
 	// Set all the motor control pins to outputs
@@ -68,32 +68,35 @@ void loop() {
   limitSwitchTop.loop();
 
   if(central){ 
-    Serial.print("Connected to central ");
-    Serial.println(central.address());
+    // Serial.print("Connected to central ");
+    // Serial.println(central.address());
 
     if(central.connected()){
-        if (limitSwitchHandle.isPressed()){
-    // run motor
-           Serial.println("Limit Switch Handle is pressed");
-  } 
-  if (limitSwitchHandle.isReleased()){
-      Serial.println("Limit Switch Handle is released");
-  }
-  if (limitSwitchTop.isPressed()){
-    // run motor
-           Serial.println("Limit Switch Top is pressed");
-  }
+      Serial.println(limitSwitchHandle.getState());
+
+      // if (limitSwitchHandle.isPressed()){
+      //     // run motor
+      //     Serial.println("Limit Switch Handle is pressed");
+      // } 
+      // if (limitSwitchHandle.isReleased()){
+      //   Serial.println("Limit Switch Handle is released");
+      // }
+      // if (limitSwitchTop.isPressed()){
+      // // run motor
+      //         Serial.println("Limit Switch Top is pressed");
+      // }
         if (switchCharacteristic.value()){
-          Serial.println(switchCharacteristic.value());
-          if (!goingUp && !limitSwitchHandle.isPressed()){
+          //Serial.println(switchCharacteristic.value());
+          if (limitSwitchHandle.getState() == 1 && !goingUp){
             runMotor("down");
             Serial.println("Going Down");
-          }  else if (limitSwitchHandle.isPressed()){
-            //delay(5000);
+          }  else if (limitSwitchHandle.getState() == 0){
+            turnOffMotor();
+            delay(5000);
             runMotor("up");
             goingUp = true;
             Serial.println("Going Up");
-          } else if (limitSwitchTop.isPressed()) {
+          } else if (limitSwitchTop.getState() == 0) {
             goingUp == false;
             turnOffMotor();
             Serial.println("Reached the Top");
@@ -128,12 +131,10 @@ void runMotor(String direction) {
     // Turn on motor B
     digitalWrite(in3, HIGH);
     digitalWrite(in4, LOW);
-    delay(2000);
   } else if (direction == "down") {	
     // Now change motor directions
     digitalWrite(in3, LOW);
     digitalWrite(in4, HIGH);
-    delay(2000);
   }
 }
 
