@@ -14,7 +14,7 @@ function Bluetooth() {
   const [isConnecting, setIsConnecting] = useState(false);
   const [characteristic, setCharacteristic] =
     useState<BluetoothRemoteGATTCharacteristic | null>();
-  const [lightTurnedOn, setLightTurnedOn] = useState(false);
+  const [doorOpening, setDoorOpened] = useState(false);
   const connectToDevice = async () => {
     try {
       // ID needs to be lowercase for some reason
@@ -51,12 +51,12 @@ function Bluetooth() {
   const ChangeLightStatus = async () => {
     console.log("Trying to change light status");
     let data: Uint8Array;
-    if (lightTurnedOn) {
+    if (doorOpening) {
       data = new Uint8Array([0x00, 0x00, 0x00]);
-      setLightTurnedOn(false);
+      setDoorOpened(false);
     } else {
       data = new Uint8Array([0xff, 0xff, 0xff]);
-      setLightTurnedOn(true);
+      setDoorOpened(true);
     }
     await characteristic?.writeValueWithResponse(data);
   };
@@ -95,11 +95,7 @@ function Bluetooth() {
           Connected to: {device?.name || "Unknown Device"}
           {/* <p>{characteristic?.uuid || "No Characteristic"}</p> */}
           <Button onClick={ChangeLightStatus}>
-            {!lightTurnedOn ? (
-              <div> Turn on Motor </div>
-            ) : (
-              <div>Turn off Motor</div>
-            )}
+            {!doorOpening ? <div> Open Door </div> : <div>Door Opening</div>}
           </Button>
           <Button onClick={disconnectDevice}>Disconnect</Button>
         </div>
