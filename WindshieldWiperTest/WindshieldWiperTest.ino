@@ -57,7 +57,6 @@ void setup() {
 
   Serial.println("BLE Motor Peripheral");
 
-  bool diconnectedNotif = false;
 }
 
 void loop() {
@@ -73,18 +72,6 @@ void loop() {
 
     if(central.connected()){
       Serial.println(limitSwitchHandle.getState());
-
-      // if (limitSwitchHandle.isPressed()){
-      //     // run motor
-      //     Serial.println("Limit Switch Handle is pressed");
-      // } 
-      // if (limitSwitchHandle.isReleased()){
-      //   Serial.println("Limit Switch Handle is released");
-      // }
-      // if (limitSwitchTop.isPressed()){
-      // // run motor
-      //         Serial.println("Limit Switch Top is pressed");
-      // }
         if (switchCharacteristic.value()){
           //Serial.println(switchCharacteristic.value());
           if (limitSwitchHandle.getState() == 1 && !goingUp){
@@ -100,6 +87,10 @@ void loop() {
             goingUp == false;
             turnOffMotor();
             Serial.println("Reached the Top");
+            central.disconnect();
+            Serial.println("Success & Disconnected");
+            switchCharacteristic.writeValue(0);
+            goingUp = false;
           }
         }   
     }
@@ -107,18 +98,6 @@ void loop() {
       Serial.println("Disconnected");
     }
   }
-
-   // when the central disconnects, print it out:
-  //  if (!disconnectedNotif){
-  //    Serial.print(F("Disconnected from central: "));
-  //     Serial.println(central.address());
-  //     disconnectedNotif = true;
-  //  }
-   
-	// directionControl();
-	// delay(1000);
-	// speedControl();
-	// delay(1000);
 }
 
 // This function lets you control spinning direction of motors
