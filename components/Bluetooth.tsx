@@ -40,7 +40,6 @@ function Bluetooth() {
       setCharacteristic(characteristic);
       setDevice(device);
       setIsConnected(true);
-      device.addEventListener("gattserverdisconnected", onDisconnected);
     } catch (err) {
       console.log("Connection failed:", err);
     } finally {
@@ -59,23 +58,6 @@ function Bluetooth() {
       setDoorOpened(true);
     }
     await characteristic?.writeValueWithResponse(data);
-  };
-
-  const onDisconnected = () => {
-    setIsConnected(false);
-    setDevice(null);
-  };
-
-  const disconnectDevice = async () => {
-    try {
-      if (device?.gatt?.connected) {
-        device.gatt.disconnect();
-      }
-      setIsConnected(false);
-      setDevice(null);
-    } catch (err) {
-      console.log("Disconnect failed:", err);
-    }
   };
 
   return (
@@ -97,7 +79,6 @@ function Bluetooth() {
           <Button onClick={ChangeLightStatus}>
             {!doorOpening ? <div> Open Door </div> : <div>Door Opening</div>}
           </Button>
-          <Button onClick={disconnectDevice}>Disconnect</Button>
         </div>
       )}
     </div>

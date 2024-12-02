@@ -6,9 +6,9 @@ ezButton limitSwitchHandle(8); // Door handle
 ezButton limitSwitchTop(9); // Top of range
 
  // Motor B connections (Connected to the L298N)
-int enB = 3;
 int in3 = 5;
 int in4 = 4;
+int enB = 3;
 
 bool goingUp = false;
 
