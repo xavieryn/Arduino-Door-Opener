@@ -108,12 +108,12 @@ void runMotor(String direction) {
 
   if (direction == "up"){
     // Turn on motor B
-    digitalWrite(in3, HIGH);
-    digitalWrite(in4, LOW);
-  } else if (direction == "down") {	
-    // Now change motor directions
     digitalWrite(in3, LOW);
     digitalWrite(in4, HIGH);
+  } else if (direction == "down") {	
+    // Now change motor directions
+    digitalWrite(in3, HIGH);
+    digitalWrite(in4, LOW);
   }
 }
 
